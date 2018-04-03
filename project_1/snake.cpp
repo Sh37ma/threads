@@ -7,6 +7,11 @@
 
 using namespace std;
 
+struct point
+{
+    int x, y;
+};
+
 int xMax, yMax, height, width;
 mutex mx;
 condition_variable cv;
@@ -16,23 +21,30 @@ WINDOW *topRightWin;
 WINDOW *botLeftWin;
 WINDOW *botRightWin;
 
-struct point
-{
-    int x, y;
-};
+vector<point> topLeftSnake;
+vector<point> topRightSnake;
+vector<point> botLeftSnake;
+vector<point> botRightSnake;
 
 void moveTopLeftSnake()
 {
     do
     {
         unique_lock<mutex> lock(mx);
-        cv.notify_all();
-        int x = rand() % 10 + 1;
         wclear(topLeftWin);
         box(topLeftWin, 0, 0);
-        wmove(topLeftWin, x, x);
-        waddch(topLeftWin, snakeChar);
-        wrefresh(topLeftWin);
+        for (int i = 0; i < 5; i++)
+        {
+            if (topLeftSnake[i].x < width - 2)
+                topLeftSnake[i].x++;
+            else
+                topLeftSnake[i].x = 1;
+            wmove(topLeftWin, topLeftSnake[i].y, topLeftSnake[i].x);
+            waddch(topLeftWin, snakeChar);
+            wrefresh(topLeftWin);
+        }
+        this_thread::sleep_for(chrono::milliseconds(100));
+        cv.notify_all();
         cv.wait(lock);
     } while (true);
 }
@@ -42,13 +54,21 @@ void moveTopRightSnake()
     do
     {
         unique_lock<mutex> lock(mx);
-        cv.notify_all();
         int x = rand() % 10 + 1;
         wclear(topRightWin);
         box(topRightWin, 0, 0);
-        wmove(topRightWin, x, x);
-        waddch(topRightWin, snakeChar);
-        wrefresh(topRightWin);
+        for (int i = 0; i < 5; i++)
+        {
+            if (topRightSnake[i].x < width - 2)
+                topRightSnake[i].x++;
+            else
+                topRightSnake[i].x = 1;
+            wmove(topRightWin, topRightSnake[i].y, topRightSnake[i].x);
+            waddch(topRightWin, snakeChar);
+            wrefresh(topRightWin);
+        }
+        this_thread::sleep_for(chrono::milliseconds(100));
+        cv.notify_all();
         cv.wait(lock);
     } while (true);
 }
@@ -58,13 +78,21 @@ void moveBotLeftSnake()
     do
     {
         unique_lock<mutex> lock(mx);
-        cv.notify_all();
         int x = rand() % 10 + 1;
         wclear(botLeftWin);
         box(botLeftWin, 0, 0);
-        wmove(botLeftWin, x, x);
-        waddch(botLeftWin, snakeChar);
-        wrefresh(botLeftWin);
+        for (int i = 0; i < 5; i++)
+        {
+            if (botLeftSnake[i].x < width - 2)
+                botLeftSnake[i].x++;
+            else
+                botLeftSnake[i].x = 1;
+            wmove(botLeftWin, botLeftSnake[i].y, botLeftSnake[i].x);
+            waddch(botLeftWin, snakeChar);
+            wrefresh(botLeftWin);
+        }
+        this_thread::sleep_for(chrono::milliseconds(100));
+        cv.notify_all();
         cv.wait(lock);
     } while (true);
 }
@@ -74,13 +102,21 @@ void moveBotRightSnake()
     do
     {
         unique_lock<mutex> lock(mx);
-        cv.notify_all();
         int x = rand() % 10 + 1;
         wclear(botRightWin);
         box(botRightWin, 0, 0);
-        wmove(botRightWin, x, x);
-        waddch(botRightWin, snakeChar);
-        wrefresh(botRightWin);
+        for (int i = 0; i < 5; i++)
+        {
+            if (botRightSnake[i].x < width - 2)
+                botRightSnake[i].x++;
+            else
+                botRightSnake[i].x = 1;
+            wmove(botRightWin, botRightSnake[i].y, botRightSnake[i].x);
+            waddch(botRightWin, snakeChar);
+            wrefresh(botRightWin);
+        }
+        this_thread::sleep_for(chrono::milliseconds(100));
+        cv.notify_all();
         cv.wait(lock);
     } while (true);
 }
@@ -124,34 +160,33 @@ int main()
     srand(time(NULL));
     prepareWindows();
 
-    // point topLeftSnake;
-    // point topRightSnake;
-    // point botLeftSnake;
-    // point botRightSnake;
+    for (int i = 0; i < 5; i++)
+    {
+        point snakePoint;
+        snakePoint.x = i + 1;
+        snakePoint.y = 1;
 
-    // topLeftSnake.x = 5;
-    // topLeftSnake.y = 15;
-    // wmove(topLeftWin, 5, 15);
-    // waddch(topLeftWin, snakeChar);
-    // wrefresh(topLeftWin);
+        topLeftSnake.push_back(snakePoint);
+        topRightSnake.push_back(snakePoint);
+        botLeftSnake.push_back(snakePoint);
+        botRightSnake.push_back(snakePoint);
 
-    // topRightSnake.x = 5;
-    // topRightSnake.y = 15;
-    // wmove(topRightWin, 5, 15);
-    // waddch(topRightWin, snakeChar);
-    // wrefresh(topRightWin);
+        wmove(topLeftWin, topLeftSnake[i].y, topLeftSnake[i].x);
+        waddch(topLeftWin, snakeChar);
+        wrefresh(topLeftWin);
 
-    // botLeftSnake.x = 5;
-    // botLeftSnake.y = 15;
-    // wmove(botLeftWin, 5, 15);
-    // waddch(botLeftWin, snakeChar);
-    // wrefresh(botLeftWin);
+        wmove(topRightWin, topRightSnake[i].y, topRightSnake[i].x);
+        waddch(topRightWin, snakeChar);
+        wrefresh(topRightWin);
 
-    // botRightSnake.x = 5;
-    // botRightSnake.y = 15;
-    // wmove(botRightWin, 5, 15);
-    // waddch(botRightWin, snakeChar);
-    // wrefresh(botRightWin);
+        wmove(botLeftWin, botLeftSnake[i].y, botLeftSnake[i].x);
+        waddch(botLeftWin, snakeChar);
+        wrefresh(botLeftWin);
+
+        wmove(botRightWin, botRightSnake[i].y, botRightSnake[i].x);
+        waddch(botRightWin, snakeChar);
+        wrefresh(botRightWin);
+    }
 
     thread moveTopLeftSnakeThread = thread(moveTopLeftSnake);
     thread moveTopRightSnakeThread = thread(moveTopRightSnake);
@@ -165,6 +200,5 @@ int main()
 
     getch();
     endwin();
-
     return 0;
 }
